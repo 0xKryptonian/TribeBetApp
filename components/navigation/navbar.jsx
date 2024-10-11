@@ -1,4 +1,4 @@
-import Wallet from "../../components/petraWallet/wallet";
+import Wallet from "../Wallet/wallet";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -8,21 +8,22 @@ import logo from "../../public/images/logo-betting.png";
 import { AiOutlineSearch } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
 import { DAPP_ID } from '@/lib/constant';
-import { ICDappClient } from '@identity-connect/dapp-sdk';
-import { ICWalletClient, WalletInfo } from '@identity-connect/wallet-sdk';
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import { WalletSelector } from "@/context/WalletSelector";
+
+// import { generateNonce, generateRandomness } from '@mysten/zklogin';
+import { useSui } from "@/lib/useSui";
+// import { UserKeyData } from "@/lib/types/UsefulTypes";
+// import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
+// import { Keypair, PublicKey } from "@mysten/sui.js/cryptography";
 
 
-const icDappClient = new ICDappClient(DAPP_ID);
-const walletInfo = {
-    deviceIdentifier: 'device-identifier',
-    platform: 'native-app',
-    platformOS: 'ios',
-    walletName: 'Petra',
-};
-
-const icWalletClient = new ICWalletClient(walletInfo);
+import {
+    ConnectButton,
+    useAccountBalance,
+    useWallet,
+    SuiChainId,
+    ErrorCode,
+    formatSUI
+} from "@suiet/wallet-kit";
 
 const style = {
     wrapper: `bg-black w-screen px-[1.2rem] py-[0.8rem] flex `,
@@ -38,23 +39,12 @@ const style = {
 
 export default function Navbar() {
     const router = useRouter();
+    const wallet = useWallet();
+
+    const { suiClient } = useSui();
     const [searchQuery, setSearchQuery] = useState("Search Your Team");
     const [navbar, setNavbar] = useState(false);
     // console.log(WalletAdapterPlugin)
-    const {
-        connect,
-        account,
-        network,
-        connected,
-        disconnect,
-        wallet,
-        wallets,
-        signAndSubmitTransaction,
-        signAndSubmitBCSTransaction,
-        signTransaction,
-        signMessage,
-        signMessageAndVerify,
-      } = useWallet();
 
     const onConnect = async (walletName) => {
         await connect(walletName);
@@ -203,11 +193,10 @@ export default function Navbar() {
                     {/* <WalletAdapterPlugin /> */}
                     Identity Connect
                 </div>
-                <div className="flex relative text-lg font-semibold px-6 py-3 bg-[#98ee2c] mr-5 text-black hover:bg-[#f0f0f0] cursor-pointer ">
-                    {/* <Wallet /> */}
-                    <WalletSelector/>
-
-
+                <div className="text-black z-40">
+                    <ConnectButton className="bg-gradient-to-l from-[#98ee2c] to-green-400 ">
+                        Connect Wallet
+                    </ConnectButton>
                 </div>
                 {/* <button onClick={() => onConnect(wallet.name)}>{wallet.name}</button>; */}
 
